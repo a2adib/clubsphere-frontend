@@ -29,12 +29,11 @@ const Register = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("image", file);
-
+    
+   
     const res = await axios.post(
       `https://api.imgbb.com/1/upload?key=072bba5fa0b942398a3c6480d4a1cb2f`,
-      formData,
+      {image: file},
       {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -44,27 +43,28 @@ const Register = () => {
 
     const imageUrl = res.data.data.display_url;
 
+    const formData = {
+        name,
+        email,
+        password,
+        imageUrl
+    }
+
     if (res.data.success == true) {
       registerWithEmailPassword(email, password)
         .then((res) => {
           handleUpdateProfile(name, imageUrl);
+          axios.post("http://localhost:3000/users", formData)
+            .then(res=>console.log(res.data))
+            .catch(err=>console.log(err.message));
           console.log(res).then(() => {
             toast.success("Registered successfully");
+            
             navigate("/");
           });
         })
         .catch((err) => toast.error(err.message));
     }
-
-    registerWithEmailPassword(email, password)
-      .then((res) => {
-        handleUpdateProfile(name, imageUrl);
-        console.log(res).then(() => {
-          toast.success("Registered successfully");
-          navigate("/");
-        });
-      })
-      .catch((err) => toast.error(err.message));
   };
 
   const handleGoogleSignIn = () => {
