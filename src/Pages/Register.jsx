@@ -14,9 +14,10 @@ const Register = () => {
     const form = e.target;
     const name = form.name.value;
     const email = form.email.value;
-    const photo = form.photo;
+    const photoInput = form.photo;
     const password = form.password.value;
-    const file = photo.files[0];
+    const file = photoInput.files[0];
+    const role = form.role.value; // New: get role from form
 
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters long");
@@ -28,42 +29,41 @@ const Register = () => {
       toast.error("Password must contain at least one lowercase letter");
       return;
     }
-
-    
-   
-    const res = await axios.post(
-      `https://api.imgbb.com/1/upload?key=072bba5fa0b942398a3c6480d4a1cb2f`,
-      {image: file},
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-    const imageUrl = res.data.data.display_url;
-
-    const formData = {
-        name,
-        email,
-        password,
-        imageUrl
+    if (role === "Choose Role") {
+      toast.error("Please select a role");
+      return;
     }
 
-    if (res.data.success == true) {
-      registerWithEmailPassword(email, password)
-        .then((res) => {
-          handleUpdateProfile(name, imageUrl);
-          axios.post("http://localhost:3000/users", formData)
-            .then(res=>console.log(res.data))
-            .catch(err=>console.log(err.message));
-          console.log(res).then(() => {
-            toast.success("Registered successfully");
-            
-            navigate("/");
-          });
-        })
-        .catch((err) => toast.error(err.message));
+    try {
+      // Correct ImgBB upload
+      const imageFormData = new FormData();
+      imageFormData.append('image', file);
+      const imgbbRes = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_APIKEY}`,
+        imageFormData
+      );
+      const imageUrl = imgbbRes.data.data.display_url;
+
+      // Firebase registration
+      await registerWithEmailPassword(email, password);
+      await handleUpdateProfile(name, imageUrl);
+
+      // Backend user creation (now includes role)
+      const userDataForBackend = {
+        name,
+        email,
+        imageUrl,
+        role,
+        password
+      };
+      await axios.post("http://localhost:3000/users", userDataForBackend);
+
+      toast.success("Registered successfully");
+      navigate("/");
+
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Registration failed");
     }
   };
 
@@ -118,6 +118,20 @@ const Register = () => {
                 className="input input-bordered"
               />
             </div>
+
+            {/* NEW ROLE SELECT */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Role</span>
+              </label>
+              <select name="role" className="select select-bordered w-full">
+                <option disabled selected>Choose Role</option>
+                <option>Member</option>
+                <option>Club Manager</option>
+              </select>
+            </div>
+            {/* END NEW ROLE SELECT */}
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Password</span>
@@ -129,6 +143,7 @@ const Register = () => {
                 className="input input-bordered"
               />
             </div>
+            
             <div className="form-control mt-6">
               <button className="btn btn-primary">Register</button>
             </div>
