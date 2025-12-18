@@ -4,7 +4,7 @@ import Aside from '../components/Aside';
 
 const Dashboard = () => {
     return (
-        <div>
+        <div className='flex'>
 
             <Aside/>
             <Outlet />

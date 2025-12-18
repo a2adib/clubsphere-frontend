@@ -58,6 +58,20 @@ const Aside = () => {
               </NavLink>
             </li>
 
+            {/* add Clubs */}
+            <li className="rounded-sm">
+              <NavLink 
+                to="/dashboard/add-clubs" 
+                className={({ isActive }) => 
+                  `flex items-center p-3 space-x-3 rounded-md transition-colors ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`
+                }
+              >
+                <FaUniversity className="w-5 h-5" />
+                <span className="font-semibold">Add Club</span>
+              </NavLink>
+            </li>
+            
+
             {/* Payments/Transactions */}
             <li className="rounded-sm">
               <NavLink 
