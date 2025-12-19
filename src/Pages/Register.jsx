@@ -3,11 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 import toast from "react-hot-toast";
 import axios from "axios";
+import useAxios from "../hooks/useAxios";
 
 const Register = () => {
   const { registerWithEmailPassword, handleUpdateProfile, handleGoogleSignin } =
     useContext(AuthContext);
   const navigate = useNavigate();
+  const axiosInstance = useAxios();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -56,7 +58,7 @@ const Register = () => {
         role,
         password
       };
-      await axios.post("http://localhost:3000/users", userDataForBackend);
+      await axiosInstance.post("/users", userDataForBackend);
 
       toast.success("Registered successfully");
       navigate("/");

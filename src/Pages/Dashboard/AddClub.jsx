@@ -1,11 +1,51 @@
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import useAxios from '../../hooks/useAxios';
+import { AuthContext } from '../../Provider/AuthProvider';
+import { useContext } from 'react';
 
 const AddClub = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    const axiosInstance = useAxios();
+    const {user} = useContext(AuthContext);
 
-    const onSubmit = (data) => {
-        console.log(data);
-        // Handle form submission here
+    const onSubmit = async (data) => {
+        const file = data.bannerImage[0];
+
+        try {
+            // Upload image to ImgBB
+            const imageFormData = new FormData();
+            imageFormData.append('image', file);
+            const imgbbRes = await axios.post(
+                `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_APIKEY}`,
+                imageFormData
+            );
+            const imageUrl = imgbbRes.data.data.display_url;
+
+            // Prepare club data for backend
+            const clubData = {
+                clubName: data.clubName,
+                category: data.category,
+                location: data.location,
+                membershipFee: parseFloat(data.membershipFee), // Ensure it's a number
+                bannerImage: imageUrl,
+                description: data.description,
+                clubMangerEmail: user?.email,
+                status: 'pending' // Default status for new clubs
+            };
+            
+            
+            // Send club data to backend
+            await axiosInstance.post('/clubs', clubData);
+
+            toast.success("Club added successfully and is pending approval!");
+            reset(); // Clear the form
+
+        } catch (error) {
+            console.error("Error adding club:", error);
+            toast.error("Failed to add club. Please try again.");
+        }
     };
 
     return (

@@ -10,7 +10,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import auth from "../firebase/firebase.config";
-import axios from "axios";
+import useAxios from "../hooks/useAxios";
 
 export const AuthContext = createContext();
 
@@ -21,6 +21,7 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(''); 
+  const axiosInstance = useAxios();
 
   const registerWithEmailPassword = (email, pass) => {
     setLoading(true);
@@ -54,7 +55,7 @@ useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        axios.get(`http://localhost:3000/users/role/${currentUser.email}`)
+        axiosInstance.get(`/users/role/${currentUser.email}`)
           .then(res => {
             setRole(res.data.role);
             console.log("User role fetched:", res.data.role);
@@ -73,7 +74,7 @@ useEffect(() => {
     return () => {
       unsubscribe();
     }
-  }, []);
+  }, [axiosInstance]);
 
   const authData = {
     registerWithEmailPassword,

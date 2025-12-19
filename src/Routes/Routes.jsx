@@ -6,6 +6,7 @@ import Login from "../Pages/Login";
 import MainDashboard from "../Pages/Dashboard/mainDashboard";
 import Dashboard from "../Dashboard/Dashboard";
 import AddClub from "../Pages/Dashboard/AddClub";
+import ManageClub from "../Pages/Dashboard/ManageClub";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "add-clubs",
         element: <AddClub/>
+      },
+      {
+        path: "manageclubs",
+        element: <ManageClub/>
       }
     ]
   }

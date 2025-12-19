@@ -48,7 +48,7 @@ const Aside = () => {
             {/* Manage Clubs */}
             <li className="rounded-sm">
               <NavLink 
-                to="/dashboard/admin/manage-clubs" 
+                to="/dashboard/manageclubs" 
                 className={({ isActive }) => 
                   `flex items-center p-3 space-x-3 rounded-md transition-colors ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`
                 }
