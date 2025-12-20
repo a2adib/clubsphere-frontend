@@ -3,12 +3,12 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../Provider/AuthProvider";
-import useAxios from "../../hooks/useAxios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AddRequest = () => {
   const { register, handleSubmit, reset } = useForm();
   const { user } = useContext(AuthContext);
-  const axiosInstance = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const [districts, setDistricts] = useState([]);
   const [upazilas, setUpazilas] = useState([]);
@@ -48,7 +48,7 @@ const AddRequest = () => {
       status: "pending", // Default status
     };
 
-    await axiosInstance.post("/requests", requestData)
+    await axiosSecure.post("/requests", requestData)
     .then(res => {
       toast.success("Donation request created successfully!");
       alert(res.data.insertedId ? "Request ID: " + res.data.insertedId : "Request submitted.");
