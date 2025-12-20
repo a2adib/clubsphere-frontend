@@ -10,28 +10,20 @@ const Register = () => {
     useContext(AuthContext);
   const navigate = useNavigate();
   const axiosInstance = useAxios();
-  const [upazilas, setUpazilas] = useState([]);
+  
+  // State for location data
   const [districts, setDistricts] = useState([]);
+  const [upazilas, setUpazilas] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedUpazila, setSelectedUpazila] = useState('');
+  
 
-
+  // Fetch location data on mount
   useEffect(() => {
-    // Fetch districts
-    axios.get("/upazilas.json")
-    .then(res => {
-        setUpazilas(res.data);
-    })
-    .catch(err => {
-        console.error("Error fetching upazilas:", err);
-    });
+    axios.get("/districts.json").then(res => setDistricts(res.data.districts)).catch(err => console.error("Error fetching districts:", err));
+    axios.get("/upazilas.json").then(res => setUpazilas(res.data.upazilas)).catch(err => console.error("Error fetching upazilas:", err));
+  }, []); 
 
-    axios.get("/districts.json")
-    .then(res => {
-        setDistricts(res.data);
-    })
-    .catch(err => {
-        console.error("Error fetching districts:", err);
-    });
-}, []); 
 
 
   const handleRegister = async (e) => {
@@ -42,8 +34,10 @@ const Register = () => {
     const photoInput = form.photo;
     const password = form.password.value;
     const file = photoInput.files[0];
-    const blood = form.blood.value; // New: get role from form
+    const blood = form.blood.value;
+    
 
+    // --- Validations ---
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters long");
       return;
@@ -58,9 +52,10 @@ const Register = () => {
       toast.error("Please select a blood group");
       return;
     }
+   
 
     try {
-      // Correct ImgBB upload
+      // 1. Image Upload
       const imageFormData = new FormData();
       imageFormData.append('image', file);
       const imgbbRes = await axios.post(
@@ -69,18 +64,23 @@ const Register = () => {
       );
       const imageUrl = imgbbRes.data.data.display_url;
 
-      // Firebase registration
+      // 2. Firebase Registration
       await registerWithEmailPassword(email, password);
       await handleUpdateProfile(name, imageUrl);
 
-      // Backend user creation (now includes role)
+      // 3. Backend User Creation
       const userDataForBackend = {
         name,
         email,
         imageUrl,
         blood,
+        selectedDistrict,
+        selectedUpazila,
         password
       };
+      console.log(userDataForBackend);
+      
+
       await axiosInstance.post("/users", userDataForBackend);
 
       toast.success("Registered successfully");
@@ -111,68 +111,55 @@ const Register = () => {
         <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
           <form onSubmit={handleRegister} className="card-body">
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Name</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                placeholder="name"
-                className="input input-bordered"
-              />
+              <label className="label"><span className="label-text">Name</span></label>
+              <input type="text" name="name" placeholder="name" className="input input-bordered" />
             </div>
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                placeholder="email"
-                className="input input-bordered"
-              />
+              <label className="label"><span className="label-text">Email</span></label>
+              <input type="email" name="email" placeholder="email" className="input input-bordered" />
             </div>
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Photo URL</span>
-              </label>
-              <input
-                type="file"
-                name="photo"
-                placeholder="photo url"
-                className="input input-bordered"
-              />
+              <label className="label"><span className="label-text">Photo URL</span></label>
+              <input type="file" name="photo" placeholder="photo url" className="input input-bordered" />
             </div>
 
-            {/* NEW ROLE SELECT */}
+            {/* Blood Group Dropdown */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Choose Blood Group</span>
-              </label>
-              <select name="blood" className="select select-bordered w-full">
-                <option disabled selected>Pick one</option>
-    <option value="A+">A+</option>
-    <option value="A-">A-</option>
-    <option value="B+">B+</option>
-    <option value="B-">B-</option>
-    <option value="O+">O+</option>
-    <option value="O-">O-</option>
-    <option value="AB+">AB+</option>
-    <option value="AB-">AB-</option>
+              <label className="label"><span className="label-text">Blood Group</span></label>
+              <select name="blood" className="select select-bordered w-full" defaultValue="">
+                <option value="" disabled>Choose blood group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
               </select>
             </div>
-            {/* END NEW ROLE SELECT */}
+            
+            {/* District Dropdown */}
+            <div className="form-control">
+              <label className="label"><span className="label-text">District</span></label>
+              <select name="district" className="select select-bordered w-full" onChange={(e) => setSelectedDistrict(e.target.value)} defaultValue="selectedDistrict">
+                <option value="selectedDistrict" disabled>Select District</option>
+                {districts.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+              </select>
+            </div>
+
+            {/* Upazila Dropdown */}
+            <div className="form-control">
+              <label className="label"><span className="label-text">Upazila</span></label>
+              <select name="upazila" onChange={(e) => setSelectedUpazila(e.target.value)} className="select select-bordered w-full" disabled={!selectedDistrict} defaultValue="selectedUpazila">
+                <option value="selectedUpazila" disabled>Select Upazila</option>
+                {upazilas.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
 
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="password"
-                className="input input-bordered"
-              />
+              <label className="label"><span className="label-text">Password</span></label>
+              <input type="password" name="password" placeholder="password" className="input input-bordered" />
             </div>
             
             <div className="form-control mt-6">
@@ -180,19 +167,9 @@ const Register = () => {
             </div>
           </form>
           <div className="card-body">
-            <p>
-              Already have an account?{" "}
-              <Link to="/login" className="link link-primary">
-                Login
-              </Link>
-            </p>
+            <p>Already have an account? <Link to="/login" className="link link-primary">Login</Link></p>
             <div className="divider">OR</div>
-            <button
-              onClick={handleGoogleSignIn}
-              className="btn btn-outline btn-primary"
-            >
-              Register with Google
-            </button>
+            <button onClick={handleGoogleSignIn} className="btn btn-outline btn-primary">Register with Google</button>
           </div>
         </div>
       </div>
