@@ -7,6 +7,7 @@ import MainDashboard from "../Pages/Dashboard/mainDashboard";
 import Dashboard from "../Dashboard/Dashboard";
 import ManageClub from "../Pages/Dashboard/ManageClub";
 import AddRequest from "../Pages/Dashboard/AddRequest";
+import AllUsers from "../Pages/Dashboard/AllUsers";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -40,8 +41,8 @@ const router = createBrowserRouter([
         element: <AddRequest/>
       },
       {
-        path: "manageclubs",
-        element: <ManageClub/>
+        path: "all-users",
+        element: <AllUsers/>
       }
     ]
   }

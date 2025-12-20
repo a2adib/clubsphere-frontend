@@ -70,6 +70,20 @@ const Aside = () => {
                 <span className="font-semibold">Add Request</span>
               </NavLink>
             </li>
+
+
+            {/* All Users */}
+            <li className="rounded-sm">
+              <NavLink 
+                to="/dashboard/all-users" 
+                className={({ isActive }) => 
+                  `flex items-center p-3 space-x-3 rounded-md transition-colors ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`
+                }
+              >
+                <FaUniversity className="w-5 h-5" />
+                <span className="font-semibold">All users</span>
+              </NavLink>
+            </li>
             
 
             {/* Payments/Transactions */}
