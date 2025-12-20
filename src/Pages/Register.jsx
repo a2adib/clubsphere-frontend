@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 import toast from "react-hot-toast";
@@ -10,6 +10,29 @@ const Register = () => {
     useContext(AuthContext);
   const navigate = useNavigate();
   const axiosInstance = useAxios();
+  const [upazilas, setUpazilas] = useState([]);
+  const [districts, setDistricts] = useState([]);
+
+
+  useEffect(() => {
+    // Fetch districts
+    axios.get("/upazilas.json")
+    .then(res => {
+        setUpazilas(res.data);
+    })
+    .catch(err => {
+        console.error("Error fetching upazilas:", err);
+    });
+
+    axios.get("/districts.json")
+    .then(res => {
+        setDistricts(res.data);
+    })
+    .catch(err => {
+        console.error("Error fetching districts:", err);
+    });
+}, []); 
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -19,7 +42,7 @@ const Register = () => {
     const photoInput = form.photo;
     const password = form.password.value;
     const file = photoInput.files[0];
-    const role = form.role.value; // New: get role from form
+    const blood = form.blood.value; // New: get role from form
 
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters long");
@@ -31,8 +54,8 @@ const Register = () => {
       toast.error("Password must contain at least one lowercase letter");
       return;
     }
-    if (role === "Choose Role") {
-      toast.error("Please select a role");
+    if (blood === "Choose blood group") {
+      toast.error("Please select a blood group");
       return;
     }
 
@@ -55,7 +78,7 @@ const Register = () => {
         name,
         email,
         imageUrl,
-        role,
+        blood,
         password
       };
       await axiosInstance.post("/users", userDataForBackend);
@@ -124,12 +147,18 @@ const Register = () => {
             {/* NEW ROLE SELECT */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Role</span>
+                <span className="label-text">Choose Blood Group</span>
               </label>
-              <select name="role" className="select select-bordered w-full">
-                <option disabled selected>Choose Role</option>
-                <option>Member</option>
-                <option>Club Manager</option>
+              <select name="blood" className="select select-bordered w-full">
+                <option disabled selected>Pick one</option>
+    <option value="A+">A+</option>
+    <option value="A-">A-</option>
+    <option value="B+">B+</option>
+    <option value="B-">B-</option>
+    <option value="O+">O+</option>
+    <option value="O-">O-</option>
+    <option value="AB+">AB+</option>
+    <option value="AB-">AB-</option>
               </select>
             </div>
             {/* END NEW ROLE SELECT */}
