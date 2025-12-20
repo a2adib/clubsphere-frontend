@@ -8,6 +8,7 @@ import Dashboard from "../Dashboard/Dashboard";
 import ManageClub from "../Pages/Dashboard/ManageClub";
 import AddRequest from "../Pages/Dashboard/AddRequest";
 import AllUsers from "../Pages/Dashboard/AllUsers";
+import PrivateRoute from "./PrivateRoute";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -30,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path: "dashboard",
-    element: <Dashboard/>,
+    element: <PrivateRoute><Dashboard/></PrivateRoute>,
     children: [
       {
         path: "/dashboard",

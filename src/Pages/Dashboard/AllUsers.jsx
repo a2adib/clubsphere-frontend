@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { AuthContext } from '../../Provider/AuthProvider';
 
@@ -7,10 +7,8 @@ const AllUsers = () => {
 
     const axiosSecure = useAxiosSecure();
     const [users, setUsers] = useState([]);
-    const {user} = useContext(AuthContext); 
 
     useEffect(() => {
-        if(!user)return;           
         axiosSecure.get('/users')
             .then(res => {
                 setUsers(res.data);
@@ -18,7 +16,7 @@ const AllUsers = () => {
             .catch(err => {
                 console.error('Error fetching users:', err);
             });
-    }, [axiosSecure, user]);
+    }, [axiosSecure]);
     
     console.log(users);
     
