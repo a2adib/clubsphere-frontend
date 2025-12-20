@@ -21,6 +21,8 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(''); 
+  const [roleLoading, setRoleLoading] = useState(true);
+  const [userStatus, setUserStatus] = useState('');
   const axiosInstance = useAxios();
 
   const registerWithEmailPassword = (email, pass) => {
@@ -58,8 +60,11 @@ useEffect(() => {
         axiosInstance.get(`/users/role/${currentUser.email}`)
           .then(res => {
             setRole(res.data.role);
+            console.log("User:", res.data);
+            setUserStatus(res.data.status); 
             console.log("User role fetched:", res.data.role);
             setLoading(false);
+            setRoleLoading(false);
           })
           .catch(err => {
             console.log(err.message);
@@ -76,6 +81,8 @@ useEffect(() => {
     }
   }, [axiosInstance]);
 
+   
+
   const authData = {
     registerWithEmailPassword,
     setUser,
@@ -85,7 +92,9 @@ useEffect(() => {
     loading,
     loginWithEmailPassword,
     logOut,
-    handleUpdateProfile
+    handleUpdateProfile,
+    roleLoading,
+    userStatus
   };
 
   return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;

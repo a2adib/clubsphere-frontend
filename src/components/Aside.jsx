@@ -7,9 +7,14 @@ import {
   FaUniversity, 
   FaSignOutAlt 
 } from "react-icons/fa";
+import { useContext } from "react";
+import { AuthContext } from "../Provider/AuthProvider";
 
 
 const Aside = () => {
+
+    const {role, logOut} = useContext(AuthContext);
+    
     return (
         <div className="flex flex-col h-screen p-3 bg-slate-900 text-white w-64 shadow-xl">
       <div className="space-y-3">
@@ -28,38 +33,14 @@ const Aside = () => {
                 }
               >
                 <FaChartPie className="w-5 h-5" />
-                <span className="font-semibold">Admin Overview</span>
+                <span className="font-semibold">Dashboard</span>
               </NavLink>
             </li>
-
-            {/* Manage Users */}
-            <li className="rounded-sm">
-              <NavLink 
-                to="/dashboard/admin/manage-users" 
-                className={({ isActive }) => 
-                  `flex items-center p-3 space-x-3 rounded-md transition-colors ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`
-                }
-              >
-                <FaUsers className="w-5 h-5" />
-                <span className="font-semibold">Manage Users</span>
-              </NavLink>
-            </li>
-
-            {/* Manage Clubs */}
-            <li className="rounded-sm">
-              <NavLink 
-                to="/dashboard/manageclubs" 
-                className={({ isActive }) => 
-                  `flex items-center p-3 space-x-3 rounded-md transition-colors ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`
-                }
-              >
-                <FaUniversity className="w-5 h-5" />
-                <span className="font-semibold">Manage Clubs</span>
-              </NavLink>
-            </li>
+            
 
             {/* add Clubs */}
-            <li className="rounded-sm">
+            {
+              role == 'donor' && <li className="rounded-sm">
               <NavLink 
                 to="/dashboard/add-request" 
                 className={({ isActive }) => 
@@ -70,11 +51,13 @@ const Aside = () => {
                 <span className="font-semibold">Add Request</span>
               </NavLink>
             </li>
+            }
 
 
             {/* All Users */}
-            <li className="rounded-sm">
-              <NavLink 
+            {
+              role == 'admin' && <li className="rounded-sm">
+                <NavLink 
                 to="/dashboard/all-users" 
                 className={({ isActive }) => 
                   `flex items-center p-3 space-x-3 rounded-md transition-colors ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`
@@ -84,6 +67,7 @@ const Aside = () => {
                 <span className="font-semibold">All users</span>
               </NavLink>
             </li>
+            }
             
 
             {/* Payments/Transactions */}
@@ -112,7 +96,7 @@ const Aside = () => {
             </NavLink>
           </li>
           <li>
-            <button className="flex items-center w-full p-3 space-x-3 text-red-400 hover:bg-red-900/20 rounded-md transition-colors">
+            <button onClick={logOut} className="flex items-center w-full p-3 space-x-3 text-red-400 hover:bg-red-900/20 rounded-md transition-colors">
               <FaSignOutAlt className="w-5 h-5" />
               <span>Logout</span>
             </button>
@@ -124,7 +108,3 @@ const Aside = () => {
 };
 
 export default Aside;
-
-
-
-
