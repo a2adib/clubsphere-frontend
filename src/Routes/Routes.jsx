@@ -9,6 +9,7 @@ import ManageClub from "../Pages/Dashboard/ManageClub";
 import AddRequest from "../Pages/Dashboard/AddRequest";
 import AllUsers from "../Pages/Dashboard/AllUsers";
 import PrivateRoute from "./PrivateRoute";
+import MyRequest from "../Pages/Dashboard/MyRequest";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "all-users",
         element: <AllUsers/>
+      },
+      {
+        path: "my-requests",
+        element: <MyRequest/>
       }
     ]
   }

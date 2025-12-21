@@ -38,7 +38,7 @@ const Aside = () => {
             </li>
             
 
-            {/* add Clubs */}
+            {/* add Request */}
             {
               role == 'donor' && <li className="rounded-sm">
               <NavLink 
@@ -49,6 +49,22 @@ const Aside = () => {
               >
                 <FaUniversity className="w-5 h-5" />
                 <span className="font-semibold">Add Request</span>
+              </NavLink>
+            </li>
+            }
+
+
+            {/* my Request */}
+            {
+              role == 'donor' && <li className="rounded-sm">
+              <NavLink 
+                to="/dashboard/my-requests" 
+                className={({ isActive }) => 
+                  `flex items-center p-3 space-x-3 rounded-md transition-colors ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`
+                }
+              >
+                <FaUniversity className="w-5 h-5" />
+                <span className="font-semibold">My Request</span>
               </NavLink>
             </li>
             }
