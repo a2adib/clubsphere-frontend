@@ -4,7 +4,7 @@ import { AuthContext } from '../Provider/AuthProvider';
 
 const Donate = () => {
     const { user } = useContext(AuthContext)
-    const axiosInstance = useAxios();    
+    const axiosInstance = useAxios();  
 
     const handleDonate = (e) => {
         e.preventDefault();
@@ -22,6 +22,7 @@ const Donate = () => {
         axiosInstance.post('/create-payment-checkout', formData)
         .then(res=>{
             console.log(res.data); 
+            window.location.href = res.data.url;
         })
         .catch(err=>{
             console.error("Error creating payment checkout:", err);
