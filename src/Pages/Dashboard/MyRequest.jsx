@@ -57,7 +57,7 @@ const MyRequest = () => {
 
             {myRequests.map((request, index) => (
               <tr key={request._id} >
-                <th>{index + 1}</th>
+                <th>{(currentPage*10)+(index+1)-10}</th>
                 <td>{request.recipientName}</td>
                 <td>{request.hospitalName}</td>
                 <td>{request.bloodGroup}</td>
@@ -82,7 +82,7 @@ const MyRequest = () => {
         ))}
 
         <button
-        onClick={handlePrevPage} 
+        onClick={handleNextPage} 
         className="btn">Next</button>
       </div>
     </div>

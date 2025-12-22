@@ -10,6 +10,7 @@ import AddRequest from "../Pages/Dashboard/AddRequest";
 import AllUsers from "../Pages/Dashboard/AllUsers";
 import PrivateRoute from "./PrivateRoute";
 import MyRequest from "../Pages/Dashboard/MyRequest";
+import Donate from "../Pages/Donate";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       { 
         path: "signup", 
         element: <Register/>  
+      },
+      {
+        path: "donate",
+        element: <Donate/>
       }
 
     ]
