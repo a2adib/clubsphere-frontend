@@ -1,5 +1,5 @@
 {
-  "name": "clubsphere-frontend",
+  "name": "blood-donation-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.2",
     "firebase": "^12.7.0",
     "react": "^19.2.0",
